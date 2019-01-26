@@ -1,5 +1,5 @@
 #include <Arduino.h>
-#include <Wire.h>
+#include <i2c_t3.h>
 #include <Servo.h>
 #include <Adafruit_BNO055.h> // Library for reading the 
 #include <SBUS.h> // Library for reading SBUS protocol from RC recievers
@@ -115,12 +115,12 @@ void displayBNO055Details(void)
 // Display the status of the BNO055 sensor
 void displayBNO055Status(void)
 {
-  /* Get the system status values (mostly for debugging purposes) */
+  // Get the system status values (mostly for debugging purposes) 
   uint8_t system_status, self_test_results, system_error;
   system_status = self_test_results = system_error = 0;
   bno.getSystemStatus(&system_status, &self_test_results, &system_error);
 
-  /* Display the results in the Serial Monitor */
+  // Display the results in the Serial Monitor 
   Serial.println("");
   Serial.print("System Status: 0x");
   Serial.println(system_status, HEX);
@@ -135,21 +135,16 @@ void displayBNO055Status(void)
 // Display the calibration status of the BNO055 sensor
 void displayBNO055CalStatus(void)
 {
-  /* Get the four calibration values (0..3) */
-  /* Any sensor data reporting 0 should be ignored, */
-  /* 3 means 'fully calibrated" */
+  // Get the four calibration values (0..3) 
+  // Any sensor data reporting 0 should be ignored, 
+  // 3 means 'fully calibrated" 
   uint8_t system, gyro, accel, mag;
   system = gyro = accel = mag = 0;
   bno.getCalibration(&system, &gyro, &accel, &mag);
 
-  /* The data should be ignored until the system calibration is > 0 */
-  Serial.print("\t");
-  if (!system)
-  {
-    Serial.print("! ");
-  }
+  // The data should be ignored until the system calibration is > 0 
 
-  /* Display the individual values */
+  // Display the individual values 
   Serial.print("Sys:");
   Serial.print(system, DEC);
   Serial.print(" G:");
@@ -179,7 +174,7 @@ void setup() {
     // Show info about the BNO055 IMU
     displayBNO055Details();
     displayBNO055Status();
-    delay(1000);
+    delay(5000);
     displayBNO055CalStatus();
 
     bno.setExtCrystalUse(true); // Set the BNO055 to use external crystal oscillator
@@ -195,10 +190,6 @@ void setup() {
     SFMotor.writeMicroseconds(0);
     PAMotor.writeMicroseconds(0);
     SAMotor.writeMicroseconds(0);
-
-    while(true){
-        Serial.println("Tick...");
-    }
 
     while(!isLandingLockReleased){
         if(x8r.read(channels, &failSafe, &lostFrame)){
